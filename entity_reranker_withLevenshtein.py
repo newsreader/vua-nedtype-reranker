@@ -64,9 +64,7 @@ for entity in my_parser.get_entities():
 		new_reference = CexternalReference()			
 		new_reference.set_resource('vua-type-reranker-v1.1')
 		new_reference.set_reference(max_key)
-		#new_reference.set_reference(external_reference.get_reference())
 		new_reference.set_confidence(str(reranked[max_key]))
-	#	print entity_text, entity.get_type(), external_reference.get_reference(), types[resource_name], distance(entity_text,resource_name)
 		my_parser.add_external_reference_to_entity(entity.get_id(),new_reference)
 	
 lp.set_endTimestamp()
