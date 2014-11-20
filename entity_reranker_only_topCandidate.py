@@ -17,6 +17,13 @@ import re
 import datetime
 from random import randrange
 
+def keywithmaxval(d):
+     """ a) create a list of the dict's keys and values; 
+         b) return the key with the max value"""  
+     v=list(d.values())
+     k=list(d.keys())
+     return k[v.index(max(v))]
+
 # Resource Types table 
 dbpedia_table =  "DBpediaResourceTypeTableOnlyRanked.tsv"
 
@@ -56,16 +63,16 @@ for entity in my_parser.get_entities():
 	for external_reference in entity.get_external_references():
 		resource_name = external_reference.get_reference().replace('http://dbpedia.org/resource/','')	
 		if resource_name in types:
-			reranked[external_reference.get_reference()] = types[resource_name]
+			reranked[external_reference.get_reference()] = int(types[resource_name])
+			print external_reference.get_reference(), types[resource_name]
 	if len(reranked) > 0:
-		max_key, value = max(reranked.iteritems(), key=lambda x:x[1])
+		max_key = sorted(reranked.items(), key=lambda t: -t[1])[0][0]
 		new_reference = CexternalReference()			
 		new_reference.set_resource('vua-type-reranker-v1.0')
 		new_reference.set_reference(max_key)
-		new_reference.set_confidence(value)
+		new_reference.set_confidence(str(reranked[max_key]))
 		my_parser.add_external_reference_to_entity(entity.get_id(),new_reference)
-			
-
+		
 lp.set_endTimestamp()
 my_parser.add_linguistic_processor('entities', lp)
 
