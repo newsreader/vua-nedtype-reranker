@@ -56,9 +56,15 @@ for entity in my_parser.get_entities():
 	reranked = {}
 	# Also get the actual references 
 	for external_reference in entity.get_external_references():
-		resource_name = external_reference.get_reference().replace('http://dbpedia.org/resource/','')	
-		if resource_name in types and external_reference.get_resource() == 'spotlight_v1' and distance(entity_text,resource_name) < 10:
-			reranked[external_reference.get_reference()] = int(types[resource_name])
+		resource_name = external_reference.get_reference().replace('http://dbpedia.org/resource/','')
+		LD=10
+		try: 
+			LD = distance(entity_text, resource_name)
+		except:
+			pass	
+		if resource_name in types and external_reference.get_resource() == 'spotlight_v1' and LD < 10:
+			score = int(types[resource_name]) - LD
+			reranked[external_reference.get_reference()] = score
 	if len(reranked) > 0:
 		max_key = sorted(reranked.items(), key=lambda t: -t[1])[0][0]
 		new_reference = CexternalReference()			
